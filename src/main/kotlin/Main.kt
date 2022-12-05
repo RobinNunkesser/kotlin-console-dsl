@@ -4,7 +4,7 @@ import de.hshl.isd.ui.view
 
 fun buildView() =
     view("Main") {
-
+        state<String>("poem")
     }
 
 fun result(args: Array<String>) =
@@ -37,7 +37,7 @@ fun result(args: Array<String>) =
         }
     }
 
-val destination = Destination.JetpackCompose
+val destination = Destination.SwiftUI
 fun main(args: Array<String>) {
     println(buildView())
     //println(result(args))

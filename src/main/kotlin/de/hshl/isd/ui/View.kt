@@ -21,7 +21,7 @@ annotation class ViewTagMarker
 
 @ViewTagMarker
 abstract class Tag(val name: String) : Element() {
-    val children = arrayListOf<com.example.html.Element>()
+    val children = arrayListOf<Element>()
 
     override fun render(builder: StringBuilder, indent: String, destination: Destination) {
         when (destination) {
@@ -30,7 +30,7 @@ abstract class Tag(val name: String) : Element() {
         }
         builder.append("$indent<$name>\n")
         for (c in children) {
-            c.render(builder, indent + "  ")
+            c.render(builder, indent + "  ", destination)
         }
         builder.append("$indent</$name>\n")
     }
@@ -39,10 +39,17 @@ abstract class Tag(val name: String) : Element() {
 }
 
 abstract class WithChildren : Element() {
-    val children = arrayListOf<com.example.html.Element>()
+    val children = arrayListOf<Element>()
 }
 
 class View(val name: String) : WithChildren() {
+
+    fun <T> state(name: String) : Element {
+        val state = State(name)
+        children.add(state)
+        return state
+    }
+
     override fun render(
         builder: StringBuilder,
         indent: String,
@@ -53,7 +60,7 @@ class View(val name: String) : WithChildren() {
             Destination.JetpackCompose -> builder.append("@Composable\nfun ${name}Content() {\n")
         }
         for (c in children) {
-            c.render(builder, indent + "  ")
+            c.render(builder, indent + "  ", destination)
         }
         when (destination) {
             Destination.SwiftUI -> builder.append("}")
@@ -68,3 +75,17 @@ fun view(name: String, init: View.() -> Unit): View {
     view.init()
     return view
 }
+
+class State(val name: String) : Element() {
+    override fun render(builder: StringBuilder, indent: String, destination: Destination) {
+        when (destination) {
+            Destination.SwiftUI -> builder.append("${indent}@State var $name = \"\"\n")
+            Destination.JetpackCompose -> builder.append("${indent}var $name by remember { mutableStateOf(\"\") }\n")
+        }
+    }
+}
+
+
+/*infix fun String.state(s: String) {
+    //children.add(TextElement(this))
+}*/
