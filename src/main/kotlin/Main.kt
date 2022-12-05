@@ -4,6 +4,9 @@ import de.hshl.isd.ui.view
 
 fun buildView() =
     view("Main") {
+        dependencies {
+            +"RequestVerses"
+        }
         state<String>("poem")
     }
 

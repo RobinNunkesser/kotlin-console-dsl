@@ -50,6 +50,13 @@ class View(val name: String) : WithChildren() {
         return state
     }
 
+    fun dependencies(init: Dependencies.() -> Unit) : Dependencies {
+        val dependencies = Dependencies()
+        dependencies.init()
+        children.add(dependencies)
+        return dependencies
+    }
+
     override fun render(
         builder: StringBuilder,
         indent: String,
@@ -85,7 +92,30 @@ class State(val name: String) : Element() {
     }
 }
 
+class Dependencies() : WithChildren() {
 
-/*infix fun String.state(s: String) {
-    //children.add(TextElement(this))
-}*/
+    operator fun String.unaryPlus() {
+       children.add(TextElement(this))
+    }
+    override fun render(
+        builder: StringBuilder,
+        indent: String,
+        destination: Destination
+    ) {
+        for (c in children) {
+            c.render(builder, indent + "  ", destination)
+        }
+    }
+
+}
+
+class TextElement(val text: String) : Element() {
+    override fun render(
+        builder: StringBuilder,
+        indent: String,
+        destination: Destination
+    ) {
+        builder.append("$indent$text\n")
+    }
+}
+
