@@ -45,9 +45,16 @@ abstract class WithChildren : Element() {
 class View(val name: String) : WithChildren() {
 
     fun <T> state(name: String) : Element {
-        val state = State(name)
+        val state = State<T>(name)
         children.add(state)
         return state
+    }
+
+    fun vstack(init: VStack.() -> Unit) : Element {
+        val vstack = VStack()
+        vstack.init()
+        children.add(vstack)
+        return vstack
     }
 
     fun dependencies(init: Dependencies.() -> Unit) : Dependencies {
@@ -83,7 +90,7 @@ fun view(name: String, init: View.() -> Unit): View {
     return view
 }
 
-class State(val name: String) : Element() {
+class State<T>(val name: String) : Element() {
     override fun render(builder: StringBuilder, indent: String, destination: Destination) {
         when (destination) {
             Destination.SwiftUI -> builder.append("${indent}@State var $name = \"\"\n")
@@ -92,18 +99,44 @@ class State(val name: String) : Element() {
     }
 }
 
+class Dependency<T>(val name: String) : Element() {
+    override fun render(builder: StringBuilder, indent: String, destination: Destination) {
+        when (destination) {
+            Destination.SwiftUI -> builder.append("${indent}let poetryReader = PoetryReader()\n")
+            Destination.JetpackCompose -> builder.append("${indent}val poetryReader = PoetryReader()\n")
+        }
+    }
+}
+
 class Dependencies() : WithChildren() {
 
-    operator fun String.unaryPlus() {
-       children.add(TextElement(this))
+    fun <T> dependency(name: String) : Element {
+        val dependency = Dependency<T>(name)
+        children.add(dependency)
+        return dependency
     }
+
     override fun render(
         builder: StringBuilder,
         indent: String,
         destination: Destination
     ) {
         for (c in children) {
-            c.render(builder, indent + "  ", destination)
+            c.render(builder, indent, destination)
+        }
+    }
+
+}
+
+class VStack() : WithChildren() {
+
+    override fun render(
+        builder: StringBuilder,
+        indent: String,
+        destination: Destination
+    ) {
+        for (c in children) {
+            c.render(builder, indent, destination)
         }
     }
 

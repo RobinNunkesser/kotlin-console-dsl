@@ -1,13 +1,17 @@
 import com.example.html.* // see declarations below
 import de.hshl.isd.ui.Destination
+import de.hshl.isd.ui.RequestVerses
 import de.hshl.isd.ui.view
 
 fun buildView() =
     view("Main") {
         dependencies {
-            +"RequestVerses"
+            dependency<RequestVerses>("poetryReader")
         }
         state<String>("poem")
+        vstack {
+
+        }
     }
 
 fun result(args: Array<String>) =
