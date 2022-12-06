@@ -9,8 +9,8 @@ fun buildView() =
         }
         state<String>(poem)
         vstack(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.SpaceAround
+            hAlignment = Alignment.Center,
+            vArrangement = Arrangement.SpaceAround
         ) {
             text("Poetry Reader", font = Font.Title)
             button(action = tapAction()) {

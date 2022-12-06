@@ -51,8 +51,8 @@ class View(val name: String) : WithChildren() {
     }
 
     fun vstack(
-        horizontalAlignment: Alignment,
-        verticalArrangement: Arrangement,
+        hAlignment: Alignment,
+        vArrangement: Arrangement,
         init: VStack.() -> Unit
     ) : Element {
         val vstack = VStack()
