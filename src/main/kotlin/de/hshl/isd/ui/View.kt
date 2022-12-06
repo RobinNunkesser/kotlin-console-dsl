@@ -30,7 +30,7 @@ abstract class Tag(val name: String) : Element() {
         }
         builder.append("$indent<$name>\n")
         for (c in children) {
-            c.render(builder, indent + "  ", destination)
+            c.render(builder, "$indent  ", destination)
         }
         builder.append("$indent</$name>\n")
     }
@@ -50,7 +50,11 @@ class View(val name: String) : WithChildren() {
         return state
     }
 
-    fun vstack(init: VStack.() -> Unit) : Element {
+    fun vstack(
+        horizontalAlignment: Alignment,
+        verticalArrangement: Arrangement,
+        init: VStack.() -> Unit
+    ) : Element {
         val vstack = VStack()
         vstack.init()
         children.add(vstack)
@@ -74,7 +78,7 @@ class View(val name: String) : WithChildren() {
             Destination.JetpackCompose -> builder.append("@Composable\nfun ${name}Content() {\n")
         }
         for (c in children) {
-            c.render(builder, indent + "  ", destination)
+            c.render(builder, "$indent  ", destination)
         }
         when (destination) {
             Destination.SwiftUI -> builder.append("}")
@@ -130,6 +134,12 @@ class Dependencies() : WithChildren() {
 
 class VStack() : WithChildren() {
 
+    fun text(text: String, font: Font) : Element {
+        val text = Text(text)
+        children.add(text)
+        return text
+    }
+
     override fun render(
         builder: StringBuilder,
         indent: String,
@@ -141,6 +151,17 @@ class VStack() : WithChildren() {
     }
 
 }
+
+class Text(val text: String) : Element() {
+    override fun render(
+        builder: StringBuilder,
+        indent: String,
+        destination: Destination
+    ) {
+        builder.append("$indent$text\n")
+    }
+}
+
 
 class TextElement(val text: String) : Element() {
     override fun render(

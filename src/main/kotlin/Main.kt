@@ -1,7 +1,5 @@
 import com.example.html.* // see declarations below
-import de.hshl.isd.ui.Destination
-import de.hshl.isd.ui.RequestVerses
-import de.hshl.isd.ui.view
+import de.hshl.isd.ui.*
 
 fun buildView() =
     view("Main") {
@@ -9,7 +7,11 @@ fun buildView() =
             dependency<RequestVerses>("poetryReader")
         }
         state<String>("poem")
-        vstack {
+        vstack(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.SpaceAround
+        ) {
+            text("Poetry Reader", font = Font.Title)
 
         }
     }
