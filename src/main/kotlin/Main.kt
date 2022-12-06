@@ -1,20 +1,28 @@
 import com.example.html.* // see declarations below
 import de.hshl.isd.ui.*
 
+val poem = "poem"
 fun buildView() =
     view("Main") {
         dependencies {
             dependency<RequestVerses>("poetryReader")
         }
-        state<String>("poem")
+        state<String>(poem)
         vstack(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.SpaceAround
         ) {
             text("Poetry Reader", font = Font.Title)
-
+            button(action = tapAction()) {
+                text("Give me some poetry")
+            }
+            text(poem)
         }
     }
+
+fun tapAction(): () -> Unit {
+    return {}
+}
 
 fun result(args: Array<String>) =
     html {

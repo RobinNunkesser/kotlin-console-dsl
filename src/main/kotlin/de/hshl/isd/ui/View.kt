@@ -132,9 +132,37 @@ class Dependencies() : WithChildren() {
 
 }
 
-class VStack() : WithChildren() {
+class Button() : WithChildren() {
 
     fun text(text: String, font: Font) : Element {
+        val text = Text(text)
+        children.add(text)
+        return text
+    }
+    override fun render(
+        builder: StringBuilder,
+        indent: String,
+        destination: Destination
+    ) {
+        for (c in children) {
+            c.render(builder, indent, destination)
+        }
+    }
+
+}
+class VStack() : WithChildren() {
+
+    fun button(
+        action: () -> Unit,
+        init: Button.() -> Unit,
+    ) : Element {
+        val button = Button()
+        button.init()
+        children.add(button)
+        return button
+    }
+
+    fun text(text: String, font: Font = Font.Body) : Element {
         val text = Text(text)
         children.add(text)
         return text
